@@ -17,6 +17,11 @@ variable "team_name" {
   description = "Name of the team that will own this secrets engine"
 }
 
+variable "service_name" {
+  type        = string
+  description = "Name of the service that will own this secrets engine"
+}
+
 variable "environment" {
   type        = string
   description = "Environment (e.g., dev, staging, prod)"
@@ -44,7 +49,7 @@ resource "vault_mount" "team_secrets" {
 
 # Create a policy that allows the team to manage their own secrets
 resource "vault_policy" "team_policy" {
-  name = "${var.team_name}-${var.environment}-policy"
+  name = "${var.team_name}-${var.service_name}-${var.environment}-policy"
   
   policy = <<-EOT
     # Allow full access to the team's secrets
