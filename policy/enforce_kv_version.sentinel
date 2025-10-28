@@ -1,0 +1,17 @@
+# This policy enforces that only KV v2 secrets engines can be created
+
+import "tfplan"
+
+# Get all Vault KV mounts
+kv_mounts = filter tfplan.resource_changes as _, rc {
+    rc.type == "vault_mount" and
+    rc.change.after.type == "kv"
+}
+
+# Check each KV mount to ensure it's using version 2
+main = rule {
+    all kv_mounts as _, rc {
+        rc.change.after.options is "2" or
+        rc.change.after.options.version is "2"
+    }
+}

@@ -1,0 +1,27 @@
+# This policy validates Vault policy structure and capabilities
+
+import "tfplan"
+
+# Get all Vault policies
+vault_policies = filter tfplan.resource_changes as _, rc {
+    rc.type == "vault_policy"
+}
+
+# Check if policy has required capabilities
+has_required_capabilities = func(policy_doc) {
+    required_caps = ["read", "list"]
+    all required_caps as cap {
+        strings.contains(policy_doc, "\"${cap}\"") or
+        strings.contains(policy_doc, "'${cap}'") or
+        strings.contains(policy_doc, cap)
+    }
+}
+
+# Validate each policy
+main = rule {
+    all vault_policies as _, rc {
+        policy_doc = rc.change.after.policy
+        has_required_capabilities(policy_doc) or
+            print("Policy missing required capabilities:", rc.address)
+    }
+}
