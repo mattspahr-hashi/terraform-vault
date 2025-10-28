@@ -20,17 +20,9 @@ valid_name = func(name) {
 
 # Check each KV mount's name
 main = rule {
-    if length(kv_mounts) is 0 {
-        return true  # No KV mounts to check
+    length(kv_mounts) is 0 or
+    all kv_mounts as _, rc {
+        rc.change.after.path is string and
+        valid_name(rc.change.after.path)
     }
-    
-    result = true
-    for kv_mounts as _, rc {
-        path = rc.change.after.path
-        if not valid_name(path) {
-            print("Invalid KV mount name:", path, "- should follow team-service-env format")
-            result = false
-        }
-    }
-    return result
 }
