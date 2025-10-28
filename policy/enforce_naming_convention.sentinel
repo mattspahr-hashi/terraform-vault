@@ -1,13 +1,7 @@
 # This policy enforces naming conventions for Vault KV mounts
 
-import "tfplan"
+import "tfplan/v2" as tfplan
 import "strings"
-
-# Get all Vault KV mounts
-kv_mounts = filter tfplan.resource_changes as _, rc {
-    rc.type == "vault_mount" and
-    rc.change.after.type == "kv"
-}
 
 # Validate naming convention: team-service-env-secrets
 valid_name = func(name) {
@@ -20,9 +14,12 @@ valid_name = func(name) {
 
 # Check each KV mount's name
 main = rule {
-    length(kv_mounts) is 0 or
-    all kv_mounts as _, rc {
-        rc.change.after.path is string and
-        valid_name(rc.change.after.path)
+    # If there are no resource changes, pass
+    length(tfplan.resource_changes) is 0 or
+    # Otherwise, ensure all KV mounts have valid names
+    all filter tfplan.resource_changes as _, rc {
+        rc.type == "vault_mount" and rc.change.after.type == "kv"
+    } as _, kv {
+        kv.change.after.path is string and valid_name(kv.change.after.path)
     }
 }
