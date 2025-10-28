@@ -3,7 +3,6 @@ module "team1_secrets" {
 
   team_name   = "team"
   environment = "dev"
-  kv_version  = 2
 }
 
 output "secrets_engine_path" {
