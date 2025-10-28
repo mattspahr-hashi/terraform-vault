@@ -4,25 +4,33 @@ import "tfplan"
 import "strings"
 
 # Get all Vault KV mounts
-kv_mounts = [rc for rc in tfplan.resource_changes if 
-    rc.type == "vault_mount" and 
+kv_mounts = filter tfplan.resource_changes as _, rc {
+    rc.type == "vault_mount" and
     rc.change.after.type == "kv"
-]
+}
 
 # Validate naming convention: team-service-env-secrets
 valid_name = func(name) {
+    if name is not string {
+        return false
+    }
     parts = strings.split(name, "-")
     return length(parts) >= 3  # At least team-service-env
 }
 
 # Check each KV mount's name
 main = rule {
-    all_valid = true
-    for rc in kv_mounts {
-        if not valid_name(rc.change.after.path) {
-            print("Invalid KV mount name:", rc.change.after.path, "- should follow team-service-env format")
-            all_valid = false
+    if length(kv_mounts) is 0 {
+        return true  # No KV mounts to check
+    }
+    
+    result = true
+    for kv_mounts as _, rc {
+        path = rc.change.after.path
+        if not valid_name(path) {
+            print("Invalid KV mount name:", path, "- should follow team-service-env format")
+            result = false
         }
     }
-    return all_valid
+    return result
 }
