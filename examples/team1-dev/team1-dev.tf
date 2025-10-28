@@ -3,7 +3,7 @@ module "vault-kv" {
   version = "1.0.1"
 
   team_name   = "payments"
-  service_name = "payment-service1"
+  service_name = "payment-service2"
   environment = "dev"
 }
 
