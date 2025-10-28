@@ -36,7 +36,7 @@ variable "kv_version" {
 
 # Create a KV secrets engine for the team
 resource "vault_mount" "team_secrets" {
-  path        = "${var.team_name}-secrets"
+  path        = "${var.team_name}/${var.environment}"
   type        = "kv"
   description = "KV secrets engine for ${var.team_name} team in ${var.environment}"
   
