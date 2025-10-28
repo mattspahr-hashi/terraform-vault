@@ -1,9 +1,9 @@
 module "vault-kv" {
   source  = "app.terraform.io/mattspahr-sandbox/vault-kv/vault"
   version = "1.0.1"
-  # insert required variables here
+
   team_name   = "payments"
-  service_name = "payment-service"
+  service_name = "payment-service1"
   environment = "dev"
 }
 
