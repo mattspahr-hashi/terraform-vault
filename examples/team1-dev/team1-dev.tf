@@ -1,7 +1,7 @@
 module "team1_secrets" {
   source = "../../modules/team-secrets-engine"
 
-  team_name   = "team1"
+  team_name   = "team"
   environment = "dev"
   kv_version  = 2
 }
