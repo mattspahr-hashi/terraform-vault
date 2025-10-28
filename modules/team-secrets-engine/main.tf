@@ -7,10 +7,6 @@ terraform {
   }
 }
 
-# Configure the Vault provider with empty configuration
-# The actual configuration should be provided by the module caller
-provider "vault" {}
-
 # Input variables
 variable "team_name" {
   type        = string
