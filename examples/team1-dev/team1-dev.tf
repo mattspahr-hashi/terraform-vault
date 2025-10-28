@@ -1,6 +1,6 @@
 module "vault-kv" {
   source  = "app.terraform.io/mattspahr-sandbox/vault-kv/vault"
-  version = "1.0.1"
+  version = "1.0.2"
 
   team_name   = "payments"
   service_name = "payment-service2"
